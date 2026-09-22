@@ -16,6 +16,12 @@ import { inRange, sortEvents } from './utils/eventLevels'
 import { notify } from './utils/helpers'
 import { DayLayoutAlgorithmPropType } from './utils/propTypes'
 import Resources from './utils/Resources'
+import {
+  getTimeGridColumnRange,
+  timeRangeContains,
+  timeRangeFits,
+  timeRangeIntersects,
+} from './utils/TimeGridRange'
 
 export default class TimeGrid extends Component {
   constructor(props) {
@@ -131,6 +137,11 @@ export default class TimeGrid extends Component {
     })
   }
 
+  getColumnRange(date, props = this.props) {
+    const { min, max, localizer } = props
+    return getTimeGridColumnRange(date, min, max, localizer)
+  }
+
   renderDayColumn(
     date,
     id,
@@ -143,24 +154,24 @@ export default class TimeGrid extends Component {
     dayLayoutAlgorithm,
     now
   ) {
-    let { min, max } = this.props
+    const { start, end } = this.getColumnRange(date)
 
     let daysEvents = (groupedEvents.get(id) || []).filter((event) =>
-      localizer.inRange(
-        date,
+      timeRangeIntersects(
         accessors.start(event),
         accessors.end(event),
-        'day'
+        start,
+        end
       )
     )
 
     let daysBackgroundEvents = (groupedBackgroundEvents.get(id) || []).filter(
       (event) =>
-        localizer.inRange(
-          date,
+        timeRangeIntersects(
           accessors.start(event),
           accessors.end(event),
-          'day'
+          start,
+          end
         )
     )
 
@@ -168,11 +179,11 @@ export default class TimeGrid extends Component {
       <DayColumn
         {...this.props}
         localizer={localizer}
-        min={localizer.merge(date, min)}
-        max={localizer.merge(date, max)}
+        min={start}
+        max={end}
         resource={resource && id}
         components={components}
-        isNow={localizer.isSameDate(date, now)}
+        isNow={timeRangeContains(now, start, end)}
         key={`${id}-${date}`}
         date={date}
         events={daysEvents}
@@ -298,8 +309,6 @@ export default class TimeGrid extends Component {
       accessors,
       getters,
       localizer,
-      min,
-      max,
       showMultiDayTimes,
       longPressThreshold,
       resizable,
@@ -317,37 +326,76 @@ export default class TimeGrid extends Component {
       rangeEvents = [],
       rangeBackgroundEvents = []
 
-    events.forEach((event) => {
-      if (inRange(event, start, end, accessors, localizer)) {
-        let eStart = accessors.start(event),
-          eEnd = accessors.end(event)
+    const columnRanges = range.map((date) => this.getColumnRange(date))
+    const now = getNow()
+    const currentColumnIndex = columnRanges.findIndex(({ start, end }) =>
+      timeRangeContains(now, start, end)
+    )
+    // Заголовок отмечает операционные сутки, которым принадлежит текущий
+    // момент, даже если календарная дата уже сменилась после полуночи.
+    const headerNow =
+      currentColumnIndex === -1
+        ? now
+        : localizer.merge(range[currentColumnIndex], now)
+    const getHeaderNow = () => headerNow
 
-        if (
-          accessors.allDay(event) ||
-          localizer.startAndEndAreDateOnly(eStart, eEnd) ||
-          (!showMultiDayTimes && !localizer.isSameDate(eStart, eEnd))
-        ) {
+    const intersectsColumn = (event) => {
+      const eventStart = accessors.start(event)
+      const eventEnd = accessors.end(event)
+
+      return columnRanges.some(({ start, end }) =>
+        timeRangeIntersects(eventStart, eventEnd, start, end)
+      )
+    }
+
+    const fitsColumn = (event) => {
+      const eventStart = accessors.start(event)
+      const eventEnd = accessors.end(event)
+
+      return columnRanges.some(({ start, end }) =>
+        timeRangeFits(eventStart, eventEnd, start, end)
+      )
+    }
+
+    events.forEach((event) => {
+      const eStart = accessors.start(event)
+      const eEnd = accessors.end(event)
+      const isAllDay =
+        accessors.allDay(event) ||
+        localizer.startAndEndAreDateOnly(eStart, eEnd)
+
+      if (isAllDay) {
+        if (inRange(event, start, end, accessors, localizer)) {
           allDayEvents.push(event)
-        } else {
-          rangeEvents.push(event)
         }
+        return
+      }
+
+      if (!intersectsColumn(event)) return
+
+      if (!showMultiDayTimes && !fitsColumn(event)) {
+        allDayEvents.push(event)
+      } else {
+        rangeEvents.push(event)
       }
     })
 
     backgroundEvents.forEach((event) => {
-      if (inRange(event, start, end, accessors, localizer)) {
+      if (intersectsColumn(event)) {
         rangeBackgroundEvents.push(event)
       }
     })
 
     allDayEvents.sort((a, b) => sortEvents(a, b, accessors, localizer))
 
+    const gutterRange = this.getColumnRange(start)
+
     const headerProps = {
       range,
       events: allDayEvents,
       width,
       rtl,
-      getNow,
+      getNow: getHeaderNow,
       localizer,
       selected,
       allDayMaxRows: this.props.showAllEvents
@@ -394,8 +442,8 @@ export default class TimeGrid extends Component {
             date={start}
             ref={this.gutterRef}
             localizer={localizer}
-            min={localizer.merge(start, min)}
-            max={localizer.merge(start, max)}
+            min={gutterRange.start}
+            max={gutterRange.end}
             step={this.props.step}
             getNow={this.props.getNow}
             timeslots={this.props.timeslots}
@@ -403,12 +451,7 @@ export default class TimeGrid extends Component {
             className="rbc-time-gutter"
             getters={getters}
           />
-          {this.renderEvents(
-            range,
-            rangeEvents,
-            rangeBackgroundEvents,
-            getNow()
-          )}
+          {this.renderEvents(range, rangeEvents, rangeBackgroundEvents, now)}
         </div>
       </div>
     )
@@ -488,16 +531,27 @@ export default class TimeGrid extends Component {
   }
 
   calculateScroll(props = this.props) {
-    const { min, max, scrollToTime, localizer } = props
+    const { range, scrollToTime, localizer } = props
 
-    const diffMillis = localizer.diff(
-      localizer.merge(scrollToTime, min),
-      scrollToTime,
-      'milliseconds'
-    )
-    const totalMillis = localizer.diff(min, max, 'milliseconds')
+    if (!range.length) {
+      this._scrollRatio = 0
+      return
+    }
 
-    this._scrollRatio = diffMillis / totalMillis
+    const { start, end } = this.getColumnRange(range[0], props)
+    let scrollTarget = localizer.merge(range[0], scrollToTime)
+
+    if (!localizer.isSameDate(start, end) && +scrollTarget < +start) {
+      scrollTarget = localizer.add(scrollTarget, 1, 'day')
+    }
+
+    const totalMinutes = localizer.getTotalMin(start, end)
+    let scrollMinutes = localizer.getTotalMin(start, scrollTarget)
+
+    if (+scrollTarget <= +start) scrollMinutes = 0
+    if (+scrollTarget >= +end) scrollMinutes = totalMinutes
+
+    this._scrollRatio = totalMinutes > 0 ? scrollMinutes / totalMinutes : 0
   }
 
   checkOverflow = () => {

@@ -111,11 +111,11 @@ export function getSlotMetrics({
     },
 
     startsBefore(date) {
-      return localizer.lt(localizer.merge(start, date), start, 'minutes')
+      return localizer.lt(date, start, 'minutes')
     },
 
     startsAfter(date) {
-      return localizer.gt(localizer.merge(end, date), end, 'minutes')
+      return localizer.gt(date, end, 'minutes')
     },
 
     getRange(rangeStart, rangeEnd, ignoreMin, ignoreMax) {
