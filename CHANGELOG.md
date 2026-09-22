@@ -1,3 +1,10 @@
+## [1.20.1](https://github.com/Ryuzaki13/react-calendar/compare/v1.20.0...v1.20.1) (2026-09-22)
+
+
+### Bug Fixes
+
+* **time-grid:** support ranges crossing midnight ([38adf48](https://github.com/Ryuzaki13/react-calendar/commit/38adf48a059bf9eae53f698c2fbbeb467ffdf3b4))
+
 # [1.20.0](https://github.com/bigcalendar/react-big-calendar/compare/v1.19.6...v1.20.0) (2026-06-01)
 
 
