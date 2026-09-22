@@ -1,5 +1,5 @@
 {
-  "name": "react-big-calendar",
+  "name": "@ryuzaki13/react-calendar",
   "version": "1.20.0",
   "description": "Calendar! with events",
   "author": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bigcalendar/react-big-calendar.git"
+    "url": "git+https://github.com/Ryuzaki13/react-calendar.git"
   },
   "publishConfig": {
     "access": "public",
@@ -139,7 +139,7 @@
     "uncontrollable": "^7.2.1"
   },
   "bugs": {
-    "url": "https://github.com/bigcalendar/react-big-calendar/issues"
+    "url": "https://github.com/Ryuzaki13/react-calendar/issues"
   },
-  "homepage": "https://github.com/bigcalendar/react-big-calendar#readme"
+  "homepage": "https://github.com/Ryuzaki13/react-calendar#readme"
 }

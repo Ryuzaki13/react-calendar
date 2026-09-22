@@ -12,9 +12,9 @@ Inspired by [Full Calendar](http://fullcalendar.io/).
 
 ## Use and Setup
 
-`yarn add react-big-calendar` or `npm install --save react-big-calendar`
+`yarn add @ryuzaki13/react-calendar` or `npm install --save @ryuzaki13/react-calendar`
 
-Include `react-big-calendar/lib/css/react-big-calendar.css` for styles, and make sure your calendar's container
+Include `@ryuzaki13/react-calendar/lib/css/react-big-calendar.css` for styles, and make sure your calendar's container
 element has a height, or the calendar won't be visible. To provide your own custom styling, see the [Custom Styling](#custom-styling) topic.
 
 ## Starters
@@ -26,8 +26,8 @@ element has a height, or the calendar won't be visible. To provide your own cust
 ## Run examples locally
 
 ```sh
-$ git clone git@github.com:bigcalendar/react-big-calendar.git
-$ cd react-big-calendar
+$ git clone git@github.com:Ryuzaki13/react-calendar.git
+$ cd react-calendar
 $ yarn
 $ yarn storybook
 ```
@@ -44,7 +44,7 @@ Regardless of your choice, you **must** choose a localizer to use this library:
 #### Moment.js
 
 ```js
-import { Calendar, momentLocalizer } from 'react-big-calendar'
+import { Calendar, momentLocalizer } from '@ryuzaki13/react-calendar'
 import moment from 'moment'
 
 const localizer = momentLocalizer(moment)
@@ -65,7 +65,7 @@ const MyCalendar = (props) => (
 #### Globalize.js v0.1.1
 
 ```js
-import { Calendar, globalizeLocalizer } from 'react-big-calendar'
+import { Calendar, globalizeLocalizer } from '@ryuzaki13/react-calendar'
 import globalize from 'globalize'
 
 const localizer = globalizeLocalizer(globalize)
@@ -86,7 +86,7 @@ const MyCalendar = (props) => (
 #### date-fns v2
 
 ```js
-import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
+import { Calendar, dateFnsLocalizer } from '@ryuzaki13/react-calendar'
 import format from 'date-fns/format'
 import parse from 'date-fns/parse'
 import startOfWeek from 'date-fns/startOfWeek'
@@ -132,7 +132,7 @@ Note that the dayjsLocalizer extends Day.js with the following plugins:
 - [UTC](https://day.js.org/docs/en/plugin/utc)
 
 ```js
-import { Calendar, dayjsLocalizer } from 'react-big-calendar'
+import { Calendar, dayjsLocalizer } from '@ryuzaki13/react-calendar'
 import dayjs from 'dayjs'
 
 const localizer = dayjsLocalizer(dayjs)
@@ -156,8 +156,8 @@ Out of the box, you can include the compiled CSS files and be up and running. Bu
 Big Calendar to match your application styling. For this reason, SASS files are included with Big Calendar.
 
 ```
-  @import 'react-big-calendar/lib/sass/styles';
-  @import 'react-big-calendar/lib/addons/dragAndDrop/styles'; // if using DnD
+  @import '@ryuzaki13/react-calendar/lib/sass/styles';
+  @import '@ryuzaki13/react-calendar/lib/addons/dragAndDrop/styles'; // if using DnD
 ```
 
 SASS implementation provides a `variables` file containing color and sizing variables that you can
