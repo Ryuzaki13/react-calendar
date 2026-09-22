@@ -1,6 +1,6 @@
 {
   "name": "@ryuzaki13/react-calendar",
-  "version": "1.20.0",
+  "version": "1.0.0",
   "description": "Calendar! with events",
   "author": {
     "name": "Jason Quense",
@@ -65,6 +65,7 @@
     "@babel/plugin-transform-private-property-in-object": "^7.29.7",
     "@babel/plugin-transform-runtime": "^7.29.7",
     "@babel/preset-env": "^7.29.7",
+    "@babel/preset-react": "^7.29.7",
     "@commitlint/cli": "^21.0.2",
     "@commitlint/config-conventional": "^21.0.2",
     "@playwright/test": "^1.60.0",
@@ -90,7 +91,6 @@
     "babel-loader": "^9.2.1",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "babel-plugin-transform-rename-import": "^2.3.0",
-    "@babel/preset-react": "^7.29.7",
     "date-fns": "^4.4.0",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
