@@ -14,7 +14,18 @@ module.exports = {
         changelogFile: 'CHANGELOG.md',
       },
     ],
-    '@semantic-release/npm',
+    [
+      '@semantic-release/npm',
+      {
+        npmPublish: false,
+      },
+    ],
+    [
+      '@semantic-release/exec',
+      {
+        publishCmd: 'npm stage publish --access public',
+      },
+    ],
     '@semantic-release/github',
     [
       '@semantic-release/git',
