@@ -1,3 +1,10 @@
+## [1.20.2](https://github.com/Ryuzaki13/react-calendar/compare/v1.20.1...v1.20.2) (2026-09-23)
+
+
+### Bug Fixes
+
+* **types:** bundle TypeScript declarations ([982aa21](https://github.com/Ryuzaki13/react-calendar/commit/982aa213397c4bdfafe27afff74611681cdbf62e))
+
 ## [1.20.1](https://github.com/Ryuzaki13/react-calendar/compare/v1.20.0...v1.20.1) (2026-09-22)
 
 
