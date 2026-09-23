@@ -16,11 +16,20 @@
   },
   "license": "MIT",
   "main": "lib/index.js",
+  "types": "types/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "lib/addons/dragAndDrop": [
+        "types/dragAndDrop.d.ts"
+      ]
+    }
+  },
   "module": "dist/react-big-calendar.esm.js",
   "style": "lib/css/react-big-calendar.css",
   "files": [
     "lib/",
     "dist/",
+    "types/",
     "LICENSE",
     "README.md",
     "CHANGELOG.md"
@@ -40,9 +49,10 @@
     "prepare": "is-ci || husky",
     "prepublishOnly": "yarn build",
     "prettier": "prettier '**/*js' '!lib/**' --write ",
+    "test:types": "tsc --project tsconfig.types.json",
     "storybook": "storybook dev -p 9002",
     "storybook:coverage": "COVERAGE=true storybook dev -p 9002",
-    "test": "yarn lint && NODE_ENV=test jest",
+    "test": "yarn lint && NODE_ENV=test jest && yarn test:types",
     "test:coverage": "yarn lint && NODE_ENV=test jest --coverage && yarn coverage:check",
     "tdd": "NODE_ENV=test jest --watch",
     "playwright": "node_modules/.bin/playwright test --config=playwright/playwright.config.js",
@@ -54,7 +64,13 @@
   },
   "peerDependencies": {
     "react": "^16.14.0 || ^17 || ^18 || ^19",
-    "react-dom": "^16.14.0 || ^17 || ^18 || ^19"
+    "react-dom": "^16.14.0 || ^17 || ^18 || ^19",
+    "@types/react": "^16.14.0 || ^17 || ^18 || ^19"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@babel/cli": "^7.29.7",
@@ -87,6 +103,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@typescript-eslint/eslint-plugin": "^8.60.0",
     "@typescript-eslint/parser": "^8.60.0",
+    "@types/react": "^19.2.18",
     "autoprefixer": "^10.5.0",
     "babel-jest": "^30.4.1",
     "babel-loader": "^9.2.1",
@@ -119,10 +136,13 @@
     "sass-loader": "^17.0.0",
     "semantic-release": "^25.0.3",
     "storybook": "^10.4.1",
+    "typescript": "^6.0.3",
     "zx": "^8.8.5"
   },
   "dependencies": {
     "@babel/runtime": "^7.29.7",
+    "@types/date-arithmetic": "^4.1.4",
+    "@types/prop-types": "^15.7.15",
     "clsx": "^2.1.1",
     "date-arithmetic": "^4.1.0",
     "dayjs": "^1.11.21",
